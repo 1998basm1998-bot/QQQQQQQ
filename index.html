@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام المولد - عرض التسديدات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <section id="login-screen" class="screen active">
+        <div class="logo-area">
+            <i class="fa-solid fa-bolt fa-3x" style="color: var(--cyan);"></i>
+            <h1>نظام المولد</h1>
+            <p>إدارة الاشتراكات والتسديدات</p>
+        </div>
+
+        <div class="login-tabs neumorphic">
+            <button class="tab-btn active" onclick="switchLoginTab('user')">مشترك</button>
+            <button class="tab-btn" onclick="switchLoginTab('admin')">أدمن</button>
+        </div>
+
+        <div id="user-login-form" class="form-container">
+            <div class="input-group neumorphic-inset">
+                <i class="fa-solid fa-id-card"></i>
+                <input type="text" id="user-input-key" placeholder="رقم السجل أو رمز الدخول">
+            </div>
+            <button class="btn-primary neumorphic" onclick="loginUser()">
+                دخول <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <div id="admin-login-form" class="form-container hidden">
+            <div class="input-group neumorphic-inset">
+                <i class="fa-solid fa-user-shield"></i>
+                <input type="text" id="admin-username" placeholder="اسم المستخدم">
+            </div>
+            <div class="input-group neumorphic-inset">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="admin-password" placeholder="كلمة المرور">
+            </div>
+            <button class="btn-cyan neumorphic" onclick="loginAdmin()">
+                دخول الأدمن <i class="fa-solid fa-unlock"></i>
+            </button>
+        </div>
+    </section>
+
+    <section id="admin-dashboard" class="screen hidden">
+        <header class="top-header neumorphic">
+            <h2>لوحة التحكم</h2>
+            <button class="icon-btn red" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+        </header>
+
+        <div class="content-area">
+            <div id="admin-home" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card neumorphic">
+                        <i class="fa-solid fa-users" style="color: var(--cyan);"></i>
+                        <h3>المشتركين</h3>
+                        <span id="total-users">0</span>
+                    </div>
+                    <div class="stat-card neumorphic">
+                        <i class="fa-solid fa-money-bill-wave" style="color: var(--red);"></i>
+                        <h3>الديون</h3>
+                        <span id="total-debt">0</span>
+                    </div>
+                    <div class="stat-card neumorphic">
+                        <i class="fa-solid fa-hand-holding-dollar" style="color: green;"></i>
+                        <h3>المقبوضات</h3>
+                        <span id="total-collected">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-users" class="tab-content">
+                <div class="action-bar">
+                    <h3>إدارة المشتركين</h3>
+                    <button class="btn-cyan small neumorphic" onclick="showAddUserModal()">+ جديد</button>
+                </div>
+                <div id="users-list" class="list-container">
+                    </div>
+            </div>
+
+            <div id="admin-payments" class="tab-content">
+                 <div class="action-bar">
+                    <h3>سجل التسديدات</h3>
+                    <button class="btn-cyan small neumorphic" onclick="showAddPaymentModal()">+ تسديد</button>
+                </div>
+                <div id="payments-list" class="list-container">
+                    </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav neumorphic">
+            <button class="nav-item active" onclick="switchAdminTab('admin-home')">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>الرئيسية</span>
+            </button>
+            <button class="nav-item" onclick="switchAdminTab('admin-users')">
+                <i class="fa-solid fa-users"></i>
+                <span>المشتركين</span>
+            </button>
+            <button class="nav-item" onclick="switchAdminTab('admin-payments')">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>التسديدات</span>
+            </button>
+        </nav>
+    </section>
+
+    <section id="user-portal" class="screen hidden">
+        <header class="top-header neumorphic">
+            <h2 id="user-portal-name">أهلاً بك</h2>
+            <button class="icon-btn red" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </header>
+
+        <div class="content-area user-view">
+            <div class="profile-card neumorphic">
+                <div class="info-row">
+                    <span>رقم السجل:</span> <strong id="u-record-num">--</strong>
+                </div>
+                <div class="info-row">
+                    <span>نوع الاشتراك:</span> <strong id="u-type">--</strong>
+                </div>
+                <div class="info-row">
+                    <span>عدد الأمبيرات:</span> <strong id="u-amps">--</strong>
+                </div>
+                <div class="info-row">
+                    <span>السعر الشهري:</span> <strong id="u-price">--</strong>
+                </div>
+                <div class="status-badge" id="u-status">فعال</div>
+            </div>
+
+            <div class="summary-strip neumorphic-inset">
+                <div class="sum-item">
+                    <span>المطلوب</span>
+                    <b id="u-total-req" style="color: var(--text-color);">0</b>
+                </div>
+                <div class="sum-item">
+                    <span>المدفوع</span>
+                    <b id="u-total-paid" style="color: green;">0</b>
+                </div>
+                <div class="sum-item">
+                    <span>المتبقي</span>
+                    <b id="u-total-remain" style="color: var(--red);">0</b>
+                </div>
+            </div>
+
+            <h3 class="section-title">سجل الفواتير</h3>
+            <div id="user-invoices-list" class="list-container">
+                </div>
+        </div>
+    </section>
+
+    <div id="modal-user" class="modal hidden">
+        <div class="modal-content neumorphic">
+            <h3>بيانات المشترك</h3>
+            <input type="text" id="new-name" placeholder="الاسم الكامل" class="neumorphic-inset">
+            <input type="text" id="new-record" placeholder="رقم السجل (فريد)" class="neumorphic-inset">
+            <input type="text" id="new-code" placeholder="رمز الدخول (كود)" class="neumorphic-inset">
+            <select id="new-type" class="neumorphic-inset">
+                <option value="أمبير">أمبير</option>
+                <option value="خط ذهبي">خط ذهبي</option>
+            </select>
+            <input type="number" id="new-amps" placeholder="عدد الأمبيرات" class="neumorphic-inset">
+            <input type="number" id="new-price" placeholder="سعر الأمبير/الخط" class="neumorphic-inset">
+            <div class="modal-actions">
+                <button class="btn-cyan neumorphic" onclick="saveUser()">حفظ</button>
+                <button class="btn-red neumorphic" onclick="closeModals()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-payment" class="modal hidden">
+        <div class="modal-content neumorphic">
+            <h3>تسجيل قسط / تسديد</h3>
+            <select id="pay-user-select" class="neumorphic-inset"></select>
+            <div class="row">
+                <input type="text" id="pay-month" placeholder="الشهر (مثال: كانون الثاني)" class="neumorphic-inset">
+                <input type="number" id="pay-year" placeholder="السنة" value="2024" class="neumorphic-inset">
+            </div>
+            <input type="number" id="pay-amount-req" placeholder="المبلغ المطلوب" class="neumorphic-inset">
+            <input type="number" id="pay-amount-paid" placeholder="المبلغ المدفوع" class="neumorphic-inset">
+            <div class="modal-actions">
+                <button class="btn-cyan neumorphic" onclick="savePayment()">حفظ</button>
+                <button class="btn-red neumorphic" onclick="closeModals()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
